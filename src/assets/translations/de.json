@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "Platziere den Marker mit Klick",
+    "placeText": "Platziere den Text mit Klick",
     "firstVertex": "Platziere den ersten Marker mit Klick",
     "continueLine": "Klicke, um weiter zu zeichnen",
     "finishLine": "Beende mit Klick auf existierenden Marker",
@@ -19,6 +20,7 @@
     "drawPolyButton": "Polygon zeichnen",
     "drawLineButton": "Polyline zeichnen",
     "drawCircleButton": "Kreis zeichnen",
+    "drawTextButton": "Text platzieren",
     "drawRectButton": "Rechteck zeichnen",
     "editButton": "Layer editieren",
     "dragButton": "Layer bewegen",

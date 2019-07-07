@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "Click to place marker",
+    "placeText": "Click to place text",
     "firstVertex": "Click to place first vertex",
     "continueLine": "Click to continue drawing",
     "finishLine": "Click any existing marker to finish",
@@ -19,6 +20,7 @@
     "drawPolyButton": "Draw Polygons",
     "drawLineButton": "Draw Polyline",
     "drawCircleButton": "Draw Circle",
+    "drawTextButton": "Draw Text",
     "drawRectButton": "Draw Rectangle",
     "editButton": "Edit Layers",
     "dragButton": "Drag Layers",

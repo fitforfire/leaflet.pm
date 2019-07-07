@@ -97,6 +97,8 @@ map2.pm.addControls({
   deleteLayer: true,
 });
 
+map2.pm.setLang('de');
+
 // map2.pm.disableDraw('Polygon');
 // map2.pm.enableDraw('Circle', {
 //     snappable: true,

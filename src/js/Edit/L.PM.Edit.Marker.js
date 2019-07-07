@@ -26,6 +26,10 @@ Edit.Marker = Edit.extend({
   ) {
     L.Util.setOptions(this, options);
 
+    if (this._isTextMarker()) {
+      return;
+    }
+
     this._map = this._layer._map;
 
     if (this.enabled()) {
@@ -60,6 +64,9 @@ Edit.Marker = Edit.extend({
     if (this._layer.dragging) {
       this._layer.dragging.disable();
     }
+
+    this._layer.unbindPopup();
+    this._layer.closePopup();
 
     this._layer.off('contextmenu', this._removeMarker, this);
 
@@ -97,4 +104,7 @@ Edit.Marker = Edit.extend({
     marker.off('pm:dragstart', this._unsnap, this);
     marker.on('pm:dragstart', this._unsnap, this);
   },
+  _isTextMarker() {
+    return 'text' in this._layer.options;
+  }
 });

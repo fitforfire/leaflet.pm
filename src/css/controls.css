@@ -37,6 +37,9 @@
 .leaflet-pm-toolbar .leaflet-pm-icon-rectangle {
   background-image: url('../assets/icons/Rectangle.svg');
 }
+.leaflet-pm-toolbar .leaflet-pm-icon-text {
+  background-image: url('../assets/icons/Text.svg');
+}
 .leaflet-pm-toolbar .leaflet-pm-icon-delete {
   background-image: url('../assets/icons/Eraser.svg');
 }

@@ -18,6 +18,7 @@ import './Draw/L.PM.Draw.Polygon';
 import './Draw/L.PM.Draw.Rectangle';
 import './Draw/L.PM.Draw.Circle';
 import './Draw/L.PM.Draw.Cut';
+import './Draw/L.PM.Draw.Text';
 
 import Edit from './Edit/L.PM.Edit';
 import './Edit/L.PM.Edit.LayerGroup';
@@ -26,6 +27,7 @@ import './Edit/L.PM.Edit.Line';
 import './Edit/L.PM.Edit.Polygon';
 import './Edit/L.PM.Edit.Rectangle';
 import './Edit/L.PM.Edit.Circle';
+import './Edit/L.PM.Edit.Text';
 
 import '../css/layers.css';
 import '../css/controls.css';
