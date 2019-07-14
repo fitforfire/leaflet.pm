@@ -112,7 +112,8 @@ Draw.Text = Draw.extend({
     return this.getTextMarkerStyle({
       type: 'text',
       text,
-      size: 24
+      size: 24,
+      color: this.options.pathOptions && this.options.pathOptions.color ? this.options.pathOptions.color : 'red'
     })
   },
   _placeText(e) {

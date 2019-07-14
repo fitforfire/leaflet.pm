@@ -233,6 +233,12 @@ geoJsonLayer.eachLayer(function(layer) {
 const b = layerGroup.getBounds();
 map2.fitBounds(b);
 
+map2.pm.setPathOptions({
+  color: 'green',
+  fillColor: 'red',
+  fillOpacity: 0.4
+});
+
 map2.on('pm:create', (e) => {
   layerGroup.addLayer(e.layer);
 });
