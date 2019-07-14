@@ -1,79 +1,108 @@
 import Edit from './L.PM.Edit';
 
-Edit.Text = Edit.extend({
-    initialize(layer) {
-        // layer is a marker in this case :-)
-        this._layer = layer;
-        this._enabled = false;
+Edit.Text = Edit.Marker.extend({
+  initialize(layer) {
+    // layer is a marker in this case :-)
+    this._layer = layer;
+    this._enabled = false;
+  },
+  enable(
+    options = {}
+  ) {
+    L.Util.setOptions(this, options);
 
-        // register dragend event e.g. to fire pm:edit
-        this._layer.on('dragend', this._onDragEnd, this);
-    },
+    this._map = this._layer._map;
 
-    toggleEdit(options) {
-        if (!this.enabled()) {
-            this.enable(options);
-        } else {
-            this.disable();
+    if (this.enabled()) {
+      return;
+    }
+    this._enabled = true;
+
+    this._initMarkers();
+    this._initButtons();
+  },
+  _initMarkers() {
+    const map = this._map;
+
+    // cleanup old ones first
+    if (this._helperLayers) {
+      this._helperLayers.clearLayers();
+    }
+
+    // add markerGroup to map, markerGroup includes regular and middle markers
+    this._helperLayers = new L.LayerGroup();
+    this._helperLayers._pmTempLayer = true;
+    this._helperLayers.addTo(map);
+
+  },
+  _initButtons() {
+    this._editButtons = document.createElement('div');
+    this._editButtons.className = 'leaflet-text-editcontrols';
+
+    const buttonDecreaseFontsize = document.createElement('a');
+    buttonDecreaseFontsize.dataset.type = 'fontsizeDecrease';
+    buttonDecreaseFontsize.innerText = '-';
+
+    const buttonIncreaseFontsize = document.createElement('a');
+    buttonIncreaseFontsize.dataset.type = 'fontsizeIncrease';
+    buttonIncreaseFontsize.innerText = '+';
+
+    const buttonChangeText = document.createElement('a');
+    buttonChangeText.dataset.type = 'changetext';
+    buttonChangeText.innerText = 'text';
+
+    this._editButtons.appendChild(buttonDecreaseFontsize);
+    this._editButtons.appendChild(buttonIncreaseFontsize);
+    this._editButtons.appendChild(buttonChangeText);
+
+    const marker = new L.Marker(this._layer.getLatLng(), {
+      draggable: false,
+      icon: L.divIcon({
+        className: 'text-edit-buttons',
+        html: this._editButtons.outerHTML
+      }),
+    });
+
+    marker.on('click', this._editButtonClick);
+    marker._marker = this._layer;
+    marker._markerIcon = this._layer.options.icon;
+    marker._pmTempLayer = true;
+
+    this._helperLayers.addLayer(marker);
+  },
+  _editButtonClick(e) {
+    const originalTarget = e.originalEvent.target;
+
+    switch (originalTarget.dataset.type) {
+      case 'fontsizeIncrease':
+        e.target._markerIcon.fontsizeIncrease();
+        break;
+      case 'fontsizeDecrease':
+        e.target._markerIcon.fontsizeDecrease();
+        break;
+      case 'changetext':
+        const newText = prompt('Neuer Text', e.target._markerIcon.options.text);
+        if (newText) {
+          e.target._markerIcon.setText(newText);
         }
-    },
+        break;
+      default:
+        console.error(`No action found for type: ${originalTarget.dataset.type}`);
+        break;
+    }
+    console.log(e.target._marker);
+    e.target._marker.feature.properties.customElement = e.target._markerIcon.options;
+  },
+  disable() {
+    this._enabled = false;
 
-    enable(
-        options = {
-            draggable: true,
-            snappable: false,
-        }
-    ) {
-        L.Util.setOptions(this, options);
+    if (this._helperLayers) {
+      this._helperLayers.clearLayers();
+    }
 
-        this._map = this._layer._map;
-
-        if (this.enabled()) {
-            return;
-        }
-        this._enabled = true;
-
-        // enable removal for the marker
-        if (!this.options.preventMarkerRemoval) {
-            this._layer.on('contextmenu', this._removeMarker, this);
-        }
-
-        // enable dragging and removal for the marker
-        if (this.options.draggable) {
-            this._layer.dragging.enable();
-        }
-    },
-
-    enabled() {
-        return this._enabled;
-    },
-
-    disable() {
-        this._enabled = false;
-
-        // disable dragging and removal for the marker
-        if (this._layer.dragging) {
-            this._layer.dragging.disable();
-        }
-
-        this._layer.off('contextmenu', this._removeMarker, this);
-
-        if (this._layerEdited) {
-            this._layer.fire('pm:update', {});
-        }
-        this._layerEdited = false;
-    },
-    _removeMarker(e) {
-        const marker = e.target;
-        marker.remove();
-        // TODO: find out why this is fired manually, shouldn't it be catched by L.PM.Map 'layerremove'?
-        marker.fire('pm:remove');
-    },
-    _onDragEnd(e) {
-        const marker = e.target;
-
-        // fire the pm:edit event and pass shape and marker
-        marker.fire('pm:edit');
-        this._layerEdited = true;
-    },
+    if (this._layerEdited) {
+      this._layer.fire('pm:update', {});
+    }
+    this._layerEdited = false;
+  },
 });

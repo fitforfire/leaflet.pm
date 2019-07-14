@@ -108,3 +108,24 @@
   cursor: pointer;
   background-color: #777;
 }
+
+.leaflet-text-editcontrols{
+  white-space: nowrap;
+  margin-top: -20px;
+}
+
+.leaflet-text-editcontrols a{
+  display: inline-block;
+  height: 20px;
+  color: #333;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 0 5px;
+  margin-right: 1px;
+  line-height: 20px;
+  background: #FFF;
+  border: 1px solid rgba(0,0,0,0.2);
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}

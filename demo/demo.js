@@ -11,7 +11,7 @@ const mapboxTiles1 = L.tileLayer(
       '&copy; <a href="https://www.mapbox.com/feedback/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }
 );
-const mapboxTiles2 = L.tileLayer(
+/*const mapboxTiles2 = L.tileLayer(
   `https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${accessToken}`,
   {
     attribution:
@@ -24,17 +24,17 @@ const mapboxTiles3 = L.tileLayer(
     attribution:
       '&copy; <a href="https://www.mapbox.com/feedback/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }
-);
+);*/
 
 const map2 = L.map('example2')
   .setView([51.505, -0.09], 13)
   .addLayer(mapboxTiles1);
-const map3 = L.map('example3')
+/*const map3 = L.map('example3')
   .setView([51.505, -0.09], 13)
   .addLayer(mapboxTiles2);
 const map4 = L.map('example4')
   .setView([51.505, -0.09], 13)
-  .addLayer(mapboxTiles3);
+  .addLayer(mapboxTiles3);*/
 // map2.dragging.disable();
 
 // map2.on('pm:create', function(e) {
@@ -61,11 +61,11 @@ const map4 = L.map('example4')
 //     console.log(e.workingLayer);
 // });
 
-const m1 = L.circleMarker([51.50313, -0.091223], { radius: 10 });
+/*const m1 = L.circleMarker([51.50313, -0.091223], { radius: 10 });
 const m2 = L.marker([51.50614, -0.0989]);
 const m3 = L.marker([51.50915, -0.096112], { pmIgnore: true });
 
-const mGroup = L.layerGroup([m1, m2, m3]).addTo(map2);
+const mGroup = L.layerGroup([m1, m2, m3]).addTo(map2);*/
 // mGroup.pm.enable();
 
 map2.pm.addControls({
@@ -118,10 +118,17 @@ const geoJsonData = {
   features: [
     {
       type: 'Feature',
-      properties: { customGeometry: { radius: 50 } },
+      properties: {
+        customElement: {
+          type: 'text',
+          text: "Testelement",
+          size: 24,
+          color: 'red'
+        }
+      },
       geometry: {
         type: 'Point',
-        coordinates: [-0.152843, 51.486742, 77],
+        coordinates: [-0.156843, 51.486742, 77],
       },
     },
     {
@@ -200,9 +207,13 @@ const geoJsonData = {
   ],
 };
 
-const theCollection = L.geoJson(geoJsonData, {
+const geoJsonLayer = L.geoJson(geoJsonData, {
   pointToLayer: (feature, latlng) => {
-    if (feature.properties.customGeometry) {
+    if (feature.properties.customElement && feature.properties.customElement.type === 'text') {
+      return new L.Marker(latlng, {
+        icon: new L.TextIcon(feature.properties.customElement)
+      });
+    } else if (feature.properties.customGeometry) {
       return new L.Circle(latlng, feature.properties.customGeometry.radius);
     } else {
       return new L.Marker(latlng);
@@ -213,11 +224,28 @@ const theCollection = L.geoJson(geoJsonData, {
   // },
 });
 
-theCollection.addTo(map2);
+const layerGroup = L.featureGroup().addTo(map2);
 
-const b = theCollection.getBounds();
+geoJsonLayer.eachLayer(function(layer) {
+  layerGroup.addLayer(layer);
+});
+
+const b = layerGroup.getBounds();
 map2.fitBounds(b);
 
+map2.on('pm:create', (e) => {
+  layerGroup.addLayer(e.layer);
+});
+
+map2.on('pm:remove', (e) => {
+  layerGroup.removeLayer(e.layer);
+});
+
+document.getElementById('export').addEventListener('click', function(){
+  document.getElementById('geojson').innerText = JSON.stringify(layerGroup.toGeoJSON());
+});
+
+/*
 console.log(theCollection);
 
 theCollection.on('pm:edit', function(e) {
@@ -480,3 +508,5 @@ layerGroup.on('pm:markerdragend', function(e) {
 // markers.addLayer(L.marker([51.505, -0.08]));
 // markers.addLayer(L.marker([51.505, -0.09]));
 // map4.addLayer(markers);
+
+*/

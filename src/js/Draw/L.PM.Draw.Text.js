@@ -13,6 +13,8 @@ Draw.Text = Draw.extend({
     // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
     L.Util.setOptions(this, options);
 
+    const text = prompt("Text eingeben", "");
+
     // change enabled state
     this._enabled = true;
 
@@ -23,7 +25,7 @@ Draw.Text = Draw.extend({
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker([0, 0], this._getTextMarkerStyle('Text'));
+    this._hintMarker = L.marker([0, 0], this._getDefaultTextMarkerStyle(text));
     this._hintMarker._pmTempLayer = true;
     this._hintMarker.addTo(this._map);
 
@@ -51,6 +53,10 @@ Draw.Text = Draw.extend({
       shape: this._shape,
       workingLayer: this._layer,
     });
+
+    if (!text) {
+      this.disable();
+    }
   },
   disable() {
     // cancel, if drawing mode isn't even enabled
@@ -96,14 +102,18 @@ Draw.Text = Draw.extend({
       this.enable(options);
     }
   },
-  _getTextMarkerStyle(text) {
+  getTextMarkerStyle(options) {
     return {
-      text,
-      icon: new L.DivIcon({
-        className: 'text-marker',
-        html: `<span class="" style="font-size: 24px;">${text}</span>`
-      })
+      customElement: options,
+      icon: new L.TextIcon(options)
     };
+  },
+  _getDefaultTextMarkerStyle(text) {
+    return this.getTextMarkerStyle({
+      type: 'text',
+      text,
+      size: 24
+    })
   },
   _placeText(e) {
     if (!e.latlng) {
@@ -120,7 +130,12 @@ Draw.Text = Draw.extend({
     const latlng = this._hintMarker.getLatLng();
 
     // create marker
-    const marker = new L.Marker(latlng, this._getTextMarkerStyle(this._hintMarker.options.text));
+    const marker = new L.Marker(latlng, this.getTextMarkerStyle(this._hintMarker.options.customElement));
+    marker.feature = {
+      properties: {
+        customElement: this._hintMarker.options.customElement
+      }
+    };
 
     // add marker to the map
     marker.addTo(this._map);
@@ -133,13 +148,9 @@ Draw.Text = Draw.extend({
     });
 
     this.disable();
-    // this._addConfigPopup();
-  },
-  _addConfigPopup() {
-    let formContent = `<label>Text:</label> <input type="text" value="${this._layer.options.text}" />`;
-    formContent += '<label>Textgröße:</label> <input type="text" value="24" width="20" />';
 
-    this._layer.bindPopup(formContent, {autoClose: false}).openPopup();
+    // marker.pm.enable();
+
   },
   _syncHintMarker(e) {
     // move the cursor marker

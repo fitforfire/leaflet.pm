@@ -59,7 +59,11 @@ L.PM = L.PM || {
 
     function initMarker() {
       if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Edit.Marker(this);
+        if ('type' in this.options.icon.options && this.options.icon.options.type === 'text') {
+          this.pm = new L.PM.Edit.Text(this);
+        } else {
+          this.pm = new L.PM.Edit.Marker(this);
+        }
       }
     }
 
