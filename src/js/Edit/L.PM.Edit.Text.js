@@ -90,7 +90,7 @@ Edit.Text = Edit.Marker.extend({
         console.error(`No action found for type: ${originalTarget.dataset.type}`);
         break;
     }
-    console.log(e.target._marker);
+
     e.target._marker.feature.properties.customElement = e.target._markerIcon.options;
   },
   disable() {

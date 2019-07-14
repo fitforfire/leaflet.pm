@@ -132,6 +132,7 @@ Draw.Text = Draw.extend({
     // create marker
     const marker = new L.Marker(latlng, this.getTextMarkerStyle(this._hintMarker.options.customElement));
     marker.feature = {
+      type: 'Feature',
       properties: {
         customElement: this._hintMarker.options.customElement
       }
